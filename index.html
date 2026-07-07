@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>여행 준비물 체크리스트</title>
+<style>
+  :root {
+    --bg: #eef1f7;
+    --card: #ffffff;
+    --line: #e6e9f0;
+    --line-soft: #f0f2f7;
+    --text: #232834;
+    --muted: #8a93a6;
+    --faint: #aab2c2;
+    --accent: #4f7cff;
+    --accent-soft: #eaf0ff;
+    --danger: #ff5c6c;
+    --danger-soft: #fff0f1;
+    --done: #b3bac7;
+    --shadow: 0 12px 44px rgba(31, 36, 48, 0.10);
+    --chip: #f3f5fa;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12151c;
+      --card: #1b1f28;
+      --line: #2a2f3b;
+      --line-soft: #232833;
+      --text: #e7ebf3;
+      --muted: #8892a3;
+      --faint: #6b7385;
+      --accent: #6b93ff;
+      --accent-soft: #22304f;
+      --danger: #ff6b78;
+      --danger-soft: #3a2327;
+      --done: #5a6273;
+      --shadow: 0 12px 44px rgba(0, 0, 0, 0.4);
+      --chip: #252a35;
+    }
+  }
+
+  :root[data-theme="light"] {
+    --bg: #eef1f7; --card: #ffffff; --line: #e6e9f0; --line-soft: #f0f2f7;
+    --text: #232834; --muted: #8a93a6; --faint: #aab2c2; --accent: #4f7cff;
+    --accent-soft: #eaf0ff; --danger: #ff5c6c; --danger-soft: #fff0f1;
+    --done: #b3bac7; --shadow: 0 12px 44px rgba(31, 36, 48, 0.10); --chip: #f3f5fa;
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151c; --card: #1b1f28; --line: #2a2f3b; --line-soft: #232833;
+    --text: #e7ebf3; --muted: #8892a3; --faint: #6b7385; --accent: #6b93ff;
+    --accent-soft: #22304f; --danger: #ff6b78; --danger-soft: #3a2327;
+    --done: #5a6273; --shadow: 0 12px 44px rgba(0, 0, 0, 0.4); --chip: #252a35;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 36px 16px 60px;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 480px;
+    background: var(--card);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 28px;
+    transition: background 0.3s;
+  }
+
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  header h1 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  header p { margin-top: 4px; color: var(--muted); font-size: 13px; }
+
+  .theme-btn {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    border: 1.5px solid var(--line);
+    background: var(--chip);
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .theme-btn:hover { border-color: var(--accent); }
+  .theme-btn:active { transform: scale(0.94); }
+
+  .templates { margin: 22px 0 18px; }
+  .templates .label {
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 9px;
+  }
+  .template-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .template-btn {
+    padding: 9px 14px;
+    border: 1.5px solid var(--line);
+    background: var(--chip);
+    color: var(--text);
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .template-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .template-btn:active { transform: scale(0.96); }
+
+  .progress { margin: 18px 0; }
+  .progress-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .progress-label { font-size: 14px; font-weight: 600; }
+  .progress-count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .progress-bar { height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), #7aa0ff);
+    border-radius: 999px; transition: width 0.35s ease;
+  }
+
+  .input-row { display: flex; gap: 8px; margin-bottom: 22px; }
+  .input-row select {
+    padding: 0 8px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--text);
+    font-size: 13.5px;
+    cursor: pointer;
+    outline: none;
+  }
+  .input-row input {
+    flex: 1; min-width: 0;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--text);
+    font-size: 15px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-row input:focus { border-color: var(--accent); }
+  .input-row button.add {
+    padding: 0 18px; border: none; border-radius: 12px;
+    background: var(--accent); color: #fff; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: background 0.2s, transform 0.1s;
+  }
+  .input-row button.add:hover { filter: brightness(1.05); }
+  .input-row button.add:active { transform: scale(0.96); }
+
+  .group { margin-bottom: 20px; }
+  .group:last-child { margin-bottom: 0; }
+  .group-head {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 13px; font-weight: 700; color: var(--muted);
+    padding: 0 2px 8px;
+    border-bottom: 1.5px solid var(--line-soft);
+    margin-bottom: 4px;
+  }
+  .group-head .g-count { color: var(--faint); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+  ul { list-style: none; }
+  li {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--line-soft);
+    animation: fade 0.25s ease;
+  }
+  li:last-child { border-bottom: none; }
+  @keyframes fade { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .check {
+    width: 22px; height: 22px;
+    border: 2px solid var(--line); border-radius: 7px;
+    flex-shrink: 0; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .check.on { background: var(--accent); border-color: var(--accent); }
+  .check.on::after {
+    content: ""; width: 5px; height: 10px;
+    border: solid #fff; border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg); margin-top: -2px;
+  }
+
+  .item-text {
+    flex: 1; font-size: 15px; cursor: text; word-break: break-all;
+    transition: color 0.2s; padding: 2px 0;
+  }
+  .item-text.done { text-decoration: line-through; color: var(--done); }
+
+  .edit-input {
+    flex: 1; font-size: 15px; padding: 4px 8px;
+    border: 1.5px solid var(--accent); border-radius: 8px;
+    background: var(--card); color: var(--text); outline: none;
+    font-family: inherit;
+  }
+
+  .del {
+    width: 28px; height: 28px; border: none; background: transparent;
+    color: var(--faint); font-size: 18px; border-radius: 8px; cursor: pointer;
+    flex-shrink: 0; transition: all 0.2s;
+  }
+  .del:hover { background: var(--danger-soft); color: var(--danger); }
+
+  .empty { text-align: center; color: var(--muted); font-size: 14px; padding: 40px 0; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1>🧳 여행 준비물</h1>
+      <p>챙길 것들을 하나씩 체크해 보세요</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="테마 전환" aria-label="테마 전환">🌙</button>
+  </header>
+
+  <section class="templates">
+    <div class="label">템플릿 불러오기</div>
+    <div class="template-row" id="templateRow"></div>
+  </section>
+
+  <section class="progress">
+    <div class="progress-top">
+      <span class="progress-label">진행 상황</span>
+      <span class="progress-count" id="count">0개 중 0개 완료</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
+  </section>
+
+  <div class="input-row">
+    <select id="catSelect" title="카테고리"></select>
+    <input type="text" id="input" placeholder="항목 입력" maxlength="60">
+    <button class="add" id="add">추가</button>
+  </div>
+
+  <div id="list"></div>
+</div>
+
+<script>
+  const CATS = [
+    { key: 'doc',  name: '서류',     icon: '📄' },
+    { key: 'elec', name: '전자기기', icon: '🔌' },
+    { key: 'cloth',name: '의류',     icon: '👕' },
+    { key: 'wash', name: '세면도구', icon: '🧴' },
+    { key: 'etc',  name: '기타',     icon: '🎒' },
+  ];
+
+  const TEMPLATES = {
+    '해외여행': [
+      ['doc','여권'],['doc','비자'],['doc','항공권'],['doc','여행자보험'],['doc','숙소 예약확인서'],
+      ['elec','휴대폰 충전기'],['elec','보조배터리'],['elec','멀티 변환 플러그'],['elec','이어폰'],
+      ['cloth','속옷'],['cloth','양말'],['cloth','겉옷'],['cloth','잠옷'],
+      ['wash','칫솔·치약'],['wash','샴푸·바디워시'],['wash','선크림'],['wash','스킨케어'],
+    ],
+    '국내여행': [
+      ['doc','신분증'],['doc','숙소 예약확인서'],['doc','교통권(기차·버스)'],
+      ['elec','휴대폰 충전기'],['elec','보조배터리'],['elec','이어폰'],
+      ['cloth','속옷'],['cloth','양말'],['cloth','겉옷'],['cloth','편한 신발'],
+      ['wash','칫솔·치약'],['wash','세안용품'],['wash','선크림'],
+    ],
+    '캠핑': [
+      ['doc','신분증'],['doc','캠핑장 예약확인서'],
+      ['elec','랜턴'],['elec','보조배터리'],['elec','휴대폰 충전기'],
+      ['cloth','방한복'],['cloth','여벌 옷'],['cloth','모자'],['cloth','장갑'],
+      ['wash','물티슈'],['wash','수건'],['wash','칫솔·치약'],
+      ['etc','텐트'],['etc','침낭'],['etc','접이식 의자'],['etc','버너·코펠'],
+    ],
+    '출장': [
+      ['doc','신분증'],['doc','명함'],['doc','출장 관련 서류'],
+      ['elec','노트북'],['elec','노트북 충전기'],['elec','휴대폰 충전기'],['elec','보조배터리'],
+      ['cloth','정장·셔츠'],['cloth','구두'],['cloth','속옷'],['cloth','양말'],
+      ['wash','칫솔·치약'],['wash','면도기'],['wash','스킨케어'],
+    ],
+  };
+
+  const STORAGE_KEY = 'travel-checklist-v2';
+  const THEME_KEY = 'travel-checklist-theme';
+
+  const input = document.getElementById('input');
+  const catSelect = document.getElementById('catSelect');
+  const addBtn = document.getElementById('add');
+  const listEl = document.getElementById('list');
+  const countEl = document.getElementById('count');
+  const fillEl = document.getElementById('fill');
+  const templateRow = document.getElementById('templateRow');
+  const themeBtn = document.getElementById('themeBtn');
+
+  let items = load();
+  let seq = items.reduce((m, i) => Math.max(m, i.id), 0) + 1;
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  }
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch {}
+  }
+
+  CATS.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.key;
+    opt.textContent = c.icon + ' ' + c.name;
+    catSelect.appendChild(opt);
+  });
+
+  Object.keys(TEMPLATES).forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'template-btn';
+    btn.textContent = name;
+    btn.addEventListener('click', () => loadTemplate(name));
+    templateRow.appendChild(btn);
+  });
+
+  function loadTemplate(name) {
+    if (items.length && !confirm(`현재 목록을 '${name}' 템플릿으로 바꿀까요?\n(기존 항목은 지워집니다)`)) return;
+    items = TEMPLATES[name].map(([cat, text]) => ({ id: seq++, text, done: false, cat }));
+    save();
+    render();
+  }
+
+  function render() {
+    listEl.innerHTML = '';
+
+    if (items.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.innerHTML = '아직 항목이 없어요.<br>위의 템플릿을 누르거나 직접 추가해 보세요!';
+      listEl.appendChild(empty);
+      updateProgress();
+      return;
+    }
+
+    CATS.forEach(cat => {
+      const groupItems = items.filter(i => i.cat === cat.key);
+      if (groupItems.length === 0) return;
+
+      const group = document.createElement('div');
+      group.className = 'group';
+
+      const head = document.createElement('div');
+      head.className = 'group-head';
+      const doneCount = groupItems.filter(i => i.done).length;
+      head.innerHTML = `<span>${cat.icon}</span><span>${cat.name}</span>` +
+        `<span class="g-count">${doneCount}/${groupItems.length}</span>`;
+      group.appendChild(head);
+
+      const ul = document.createElement('ul');
+      groupItems.forEach(item => ul.appendChild(renderItem(item)));
+      group.appendChild(ul);
+      listEl.appendChild(group);
+    });
+
+    updateProgress();
+  }
+
+  function renderItem(item) {
+    const li = document.createElement('li');
+
+    const check = document.createElement('div');
+    check.className = 'check' + (item.done ? ' on' : '');
+    check.addEventListener('click', () => toggle(item.id));
+
+    const text = document.createElement('span');
+    text.className = 'item-text' + (item.done ? ' done' : '');
+    text.textContent = item.text;
+    text.title = '클릭하면 수정';
+    text.addEventListener('click', () => startEdit(li, item));
+
+    const del = document.createElement('button');
+    del.className = 'del';
+    del.textContent = '×';
+    del.title = '삭제';
+    del.addEventListener('click', () => remove(item.id));
+
+    li.append(check, text, del);
+    return li;
+  }
+
+  function startEdit(li, item) {
+    const editInput = document.createElement('input');
+    editInput.className = 'edit-input';
+    editInput.value = item.text;
+    editInput.maxLength = 60;
+
+    const textSpan = li.querySelector('.item-text');
+    li.replaceChild(editInput, textSpan);
+    editInput.focus();
+    editInput.setSelectionRange(editInput.value.length, editInput.value.length);
+
+    let finished = false;
+    const commit = (saveChange) => {
+      if (finished) return;
+      finished = true;
+      if (saveChange) {
+        const v = editInput.value.trim();
+        if (v) item.text = v;
+      }
+      save();
+      render();
+    };
+
+    editInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') commit(true);
+      else if (e.key === 'Escape') commit(false);
+    });
+    editInput.addEventListener('blur', () => commit(true));
+  }
+
+  function updateProgress() {
+    const total = items.length;
+    const done = items.filter(i => i.done).length;
+    countEl.textContent = `${total}개 중 ${done}개 완료`;
+    fillEl.style.width = total === 0 ? '0%' : (done / total * 100) + '%';
+  }
+
+  function addItem() {
+    const value = input.value.trim();
+    if (!value) return;
+    items.push({ id: seq++, text: value, done: false, cat: catSelect.value });
+    input.value = '';
+    input.focus();
+    save();
+    render();
+  }
+
+  function toggle(id) {
+    const item = items.find(i => i.id === id);
+    if (item) item.done = !item.done;
+    save();
+    render();
+  }
+
+  function remove(id) {
+    items = items.filter(i => i.id !== id);
+    save();
+    render();
+  }
+
+  addBtn.addEventListener('click', addItem);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    try { localStorage.setItem(THEME_KEY, theme); } catch {}
+  }
+  function initTheme() {
+    let theme;
+    try { theme = localStorage.getItem(THEME_KEY); } catch {}
+    if (!theme) {
+      theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    applyTheme(theme);
+  }
+  themeBtn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  });
+
+  initTheme();
+  render();
+</script>
+</body>
+</html>
