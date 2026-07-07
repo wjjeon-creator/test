@@ -58,14 +58,18 @@
 
   body {
     font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
-    background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     padding: 36px 16px 60px;
-    transition: background 0.3s, color 0.3s;
+    /* 몰디브 바다 사진 + (로딩 실패 시) 청록 바다 그라데이션 fallback */
+    background:
+      linear-gradient(180deg, rgba(3,18,40,0.28), rgba(3,18,40,0.08) 42%, rgba(3,18,40,0.34)),
+      url("https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=1920&q=80") center center / cover no-repeat fixed,
+      linear-gradient(160deg, #9fe6f2 0%, #49bcd6 52%, #2b7fb3 100%);
+    background-color: #49bcd6;
   }
 
   .app {
